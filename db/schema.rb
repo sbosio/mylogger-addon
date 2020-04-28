@@ -10,9 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 2020_04_24_200137) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "resources", force: :cascade do |t|
+    t.string "callback_url", null: false
+    t.string "name", null: false
+    t.uuid "grant_code", null: false
+    t.datetime "grant_expires_at", null: false
+    t.string "grant_type", null: false
+    t.string "oauth_token"
+    t.string "oauth_refresh_token"
+    t.string "oauth_token_expires_at"
+    t.jsonb "options", default: "'{}'::jsonb"
+    t.string "plan", null: false
+    t.string "region"
+    t.uuid "external_id", null: false
+    t.string "log_drain_token", null: false
+    t.string "state", default: "pending"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["external_id"], name: "index_resources_on_external_id", unique: true
+  end
 
 end
