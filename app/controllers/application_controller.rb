@@ -4,10 +4,10 @@
 # Base controller class.
 #
 class ApplicationController < ActionController::API
+  rescue_from(StandardError, with: :internal_server_error) if Rails.env.production?
   rescue_from ActiveRecord::RecordInvalid, with: :unprocessable_entity
   rescue_from Heroku::NotAuthorizedError, with: :unauthorized
   rescue_from Heroku::UnavailablePlanError, with: :unprocessable_entity
-  rescue_from(StandardError, with: :internal_server_error) if Rails.env.production?
 
   private
 
