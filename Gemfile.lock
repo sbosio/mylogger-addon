@@ -88,8 +88,6 @@ GEM
     loofah (2.5.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
-    macaddr (1.7.2)
-      systemu (~> 2.6.5)
     mail (2.7.1)
       mini_mime (>= 0.1.1)
     marcel (0.3.3)
@@ -243,15 +241,12 @@ GEM
       activesupport
       rspec (~> 3.3)
       state_machines
-    systemu (2.6.5)
     thor (1.0.1)
     thread_safe (0.3.6)
     tilt (2.0.10)
     tzinfo (1.2.7)
       thread_safe (~> 0.1)
     unicode-display_width (1.7.0)
-    uuid (2.3.9)
-      macaddr (~> 1.0)
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.4)
@@ -291,7 +286,6 @@ DEPENDENCIES
   spring-watcher-listen (~> 2.0.0)
   state_machines-activerecord
   state_machines-rspec
-  uuid
   yard
 
 RUBY VERSION
