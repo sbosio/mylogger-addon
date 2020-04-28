@@ -1,0 +1,24 @@
+en:
+  heroku:
+    error_messages:
+      internal_server_error: >-
+        Internal server error occurred. Please, register a support ticket and provide this information to our support crew:
+        '%{exception_message}'.
+      not_found: The requested URL was not found or an incorrect response format was requested.
+      unauthorized: The authorization header wasn't set or was set with wrong credentials.
+      unavailable_plan: The requested plan doesn't exists or isn't currently active.
+    resources:
+      provision_requested_for_pending_resource: >-
+        Your add-on will be provisioned in a moment. It will be available shortly.
+      provision_requested_for_provisioning_resource: >-
+        Your add-on is being provisioned currently. It will be available shortly.
+      provision_requested_for_provisioned_resource: >-
+        Your add-on has been successfully provisioned already.
+      provision_requested_for_provision_failed_resource: >-
+        Your add-on couldn't be provisioned in a proper time. Please register a support ticket.
+      provision_requested_for_deprovision_failed_resource: >-
+        Your add-on can't be provisioned because it was already deprovisioned.
+      provision_requested_for_deprovisioned_resource: >-
+        Your add-on can't be provisioned because it was already deprovisioned.
+      provision_requested_for_deprovisioning_resource: >-
+        Your add-on can't be provisioned because it's being deprovisioned.

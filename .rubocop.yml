@@ -1,0 +1,32 @@
+#inherit_from: .rubocop_todo.yml
+
+require:
+  - rubocop-rspec
+  - rubocop-performance
+
+AllCops:
+  TargetRubyVersion: 2.6
+  NewCops: enable
+  Exclude:
+    - 'tmp/**/*'
+
+Layout/LineLength:
+  Max: 132
+
+Metrics/AbcSize:
+  Exclude:
+    - 'db/migrate/*'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'db/migrate/*'
+    - 'spec/**/*_spec.rb'
+    - 'spec/support/shared_examples/*'
+
+Metrics/MethodLength:
+  Exclude:
+    - 'db/migrate/*'
+
+Style/Documentation:
+  Exclude:
+    - 'db/migrate/*'
