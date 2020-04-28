@@ -12,12 +12,13 @@ module Heroku
     # POST '/heroku/resources'
     #
     def create
-      @resource = Resource.create_with(mapped_params).find_or_create_by!(external_id: resource_params[:uuid])
-      @resource.provision!
-      status = :accepted
-    rescue StateMachine::InvalidTransition
-      status = :unprocessable_entity
-    ensure
+      begin
+        @resource = Resource.create_with(mapped_params).find_or_create_by!(external_id: resource_params[:uuid])
+        @resource.provision!
+        status = :accepted
+      rescue StateMachine::InvalidTransition
+        status = :unprocessable_entity
+      end
       render json: build_response.to_json, status: status, content_type: Heroku::MimeType::ADDON_PARTNER_API
     end
 
