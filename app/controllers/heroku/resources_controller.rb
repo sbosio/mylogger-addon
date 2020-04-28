@@ -61,9 +61,9 @@ module Heroku
       {
         callback_url: resource_params[:callback_url],
         name: resource_params[:name],
-        grant_code: resource_params[:oauth_grant][:code],
-        grant_expires_at: resource_params[:oauth_grant][:expires_at],
-        grant_type: resource_params[:oauth_grant][:type],
+        grant_code: resource_params.dig(:oauth_grant, :code),
+        grant_expires_at: resource_params.dig(:oauth_grant, :expires_at),
+        grant_type: resource_params.dig(:oauth_grant, :type),
         options: resource_params[:options],
         plan: resource_params[:plan],
         region: resource_params[:region],
