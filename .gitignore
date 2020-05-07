@@ -28,3 +28,6 @@
 
 # Ignore byebug history
 /.byebug_history
+
+# Ignore ripper-tags TAGS file
+/TAGS

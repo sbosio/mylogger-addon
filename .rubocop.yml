@@ -27,6 +27,9 @@ Metrics/MethodLength:
   Exclude:
     - 'db/migrate/*'
 
+RSpec/NestedGroups:
+  Max: 4
+
 Style/Documentation:
   Exclude:
     - 'db/migrate/*'

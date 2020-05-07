@@ -12,13 +12,15 @@ module Heroku
     # POST '/heroku/resources'
     #
     def create
+      @resource = Resource.create_with(mapped_params).find_or_create_by!(external_id: resource_params[:uuid])
+
       begin
-        @resource = Resource.create_with(mapped_params).find_or_create_by!(external_id: resource_params[:uuid])
         @resource.provision!
         status = :accepted
-      rescue StateMachine::InvalidTransition
+      rescue StateMachines::InvalidTransition
         status = :unprocessable_entity
       end
+
       render json: build_response.to_json, status: status, content_type: Heroku::MimeType::ADDON_PARTNER_API
     end
 
@@ -26,7 +28,16 @@ module Heroku
     # DELETE '/heroku/resources/:id'
     #
     def destroy
-      head :no_content, content_type: Heroku::MimeType::ADDON_PARTNER_API
+      @resource = Resource.find_by!(external_id: params[:id])
+
+      begin
+        @resource.deprovision!
+        status = :no_content
+      rescue StateMachines::InvalidTransition
+        status = :gone
+      end
+
+      head status, content_type: Heroku::MimeType::ADDON_PARTNER_API
     end
 
     private
@@ -40,7 +51,7 @@ module Heroku
       raise NotAuthorizedError unless has_basic_credentials?(request)
 
       user_name, password = user_name_and_password(request).map(&:strip)
-      raise NotAuthorizedError unless user_name == ENV['MANIFEST_ID'] && password == ENV['MANIFEST_PASSWORD']
+      raise Heroku::NotAuthorizedError unless user_name == ENV['MANIFEST_ID'] && password == ENV['MANIFEST_PASSWORD']
     end
 
     #

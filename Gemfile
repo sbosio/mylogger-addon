@@ -29,6 +29,18 @@ gem 'fast_jsonapi'
 # State machines
 gem 'state_machines-activerecord'
 
+# DelayedJob for background (asynchronous) processing
+gem 'delayed_job_active_record'
+
+# Faraday for making API requests
+gem 'faraday'
+
+# Lockbox to encrypt data
+gem 'lockbox'
+
+# Heroku Platform API Ruby client
+gem 'platform-api'
+
 group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'dotenv-rails'
@@ -41,6 +53,7 @@ end
 group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'rails_best_practices'
+  gem 'ripper-tags'
   gem 'rubocop'
   gem 'rubocop-performance'
   gem 'rubocop-rspec'
@@ -60,6 +73,7 @@ group :test do
   gem 'shoulda-matchers'
   gem 'simplecov'
   gem 'state_machines-rspec'
+  gem 'webmock'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
