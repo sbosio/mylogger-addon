@@ -10,25 +10,41 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_24_200137) do
+ActiveRecord::Schema.define(version: 2020_05_04_144640) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "delayed_jobs", force: :cascade do |t|
+    t.integer "priority", default: 0, null: false
+    t.integer "attempts", default: 0, null: false
+    t.text "handler", null: false
+    t.text "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string "locked_by"
+    t.string "queue"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["priority", "run_at"], name: "delayed_jobs_priority"
+  end
+
   create_table "resources", force: :cascade do |t|
     t.string "callback_url", null: false
     t.string "name", null: false
-    t.uuid "grant_code", null: false
+    t.text "grant_code_ciphertext", null: false
     t.datetime "grant_expires_at", null: false
     t.string "grant_type", null: false
-    t.string "oauth_token"
-    t.string "oauth_refresh_token"
-    t.string "oauth_token_expires_at"
+    t.text "access_token_ciphertext"
+    t.string "access_token_expires_at"
+    t.string "access_token_type"
+    t.text "refresh_token_ciphertext"
     t.jsonb "options", default: "'{}'::jsonb"
     t.string "plan", null: false
     t.string "region"
     t.uuid "external_id", null: false
-    t.string "log_drain_token", null: false
+    t.text "log_drain_token", null: false
     t.string "state", default: "pending"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
