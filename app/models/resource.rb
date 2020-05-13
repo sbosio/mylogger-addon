@@ -5,18 +5,23 @@
 #
 class Resource < ApplicationRecord
   #
+  # Associations.
+  #
+  has_many :log_frames, inverse_of: :resource
+
+  #
   # Validations.
   #
   validates :callback_url, :name, :grant_code, :grant_expires_at, :grant_type, :plan, :log_drain_token, :state, presence: true
   validates :external_id, presence: true, uniqueness: { case_sensitive: false }
 
   #
-  # Lockbox encrypted attributes
+  # Lockbox encrypted attributes.
   #
   encrypts :grant_code, :access_token, :refresh_token
 
   #
-  # Verify that the requested plan is still available or raise.
+  # Verify that the requested plan is still available or raise an exception.
   #
   before_create :check_plan_availability!
 
@@ -49,12 +54,21 @@ class Resource < ApplicationRecord
   #
   # Returns a fresh OAuth access token.
   #
-  # @return [String, nil] a fresh OAuth access token or `nil` if it was expired and we couldn't be refresh it.
+  # @return [String, nil] a fresh OAuth access token or `nil` if it was expired and we couldn't refresh it.
   #
-  def fresh_token
-    return access_token unless token_expired?
+  def fresh_access_token
+    return access_token unless access_token_expired?
 
     Heroku::AuthorizationManager::TokenRefresher.call(self)
+  end
+
+  #
+  # Returns the count of log messages stored for this resource.
+  #
+  # @return [Integer] count of log messages
+  #
+  def log_messages_count
+    log_frames.sum(:message_count)
   end
 
   private
@@ -69,7 +83,12 @@ class Resource < ApplicationRecord
     raise Heroku::UnavailablePlanError unless Heroku::Plan.available?(plan)
   end
 
-  def deprovision_resource; end
+  #
+  # Enqueues a job for deprovisioning.
+  #
+  def deprovision_resource
+    Heroku::DeprovisioningJob.perform_later id
+  end
 
   #
   # Enqueues a job for provisioning.
@@ -83,7 +102,7 @@ class Resource < ApplicationRecord
   #
   # @return [true, false]
   #
-  def token_expired?
+  def access_token_expired?
     access_token.blank? || access_token_expires_at < Time.current + 1.minute
   end
 end

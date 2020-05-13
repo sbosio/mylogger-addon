@@ -44,15 +44,10 @@ describe Heroku::ProvisioningManager::ResourceProvisioner, type: :service do
       end
     end
 
-    context 'when the resource allocator service fails' do
+    context 'when grant exchanger service succeeds and resource allocator service fails' do
       let(:grant_exchanger_result) { true }
       let(:resource_allocator_result) { false }
       let(:addon_config_updater_result) { nil }
-
-      it 'calls grant exchanger service object' do
-        result
-        expect(Heroku::AuthorizationManager::GrantExchanger).to have_received(:call).with(resource)
-      end
 
       it 'calls resource allocator service object' do
         result
@@ -69,20 +64,10 @@ describe Heroku::ProvisioningManager::ResourceProvisioner, type: :service do
       end
     end
 
-    context 'when the addon config updater service fails' do
+    context 'when resource allocator service succeeds and addon config updater service fails' do
       let(:grant_exchanger_result) { true }
       let(:resource_allocator_result) { true }
       let(:addon_config_updater_result) { false }
-
-      it 'calls grant exchanger service object' do
-        result
-        expect(Heroku::AuthorizationManager::GrantExchanger).to have_received(:call).with(resource)
-      end
-
-      it 'calls resource allocator service object' do
-        result
-        expect(Heroku::ProvisioningManager::ResourceAllocator).to have_received(:call).with(resource)
-      end
 
       it 'calls addon config updater service object' do
         result
@@ -98,21 +83,6 @@ describe Heroku::ProvisioningManager::ResourceProvisioner, type: :service do
       let(:grant_exchanger_result) { true }
       let(:resource_allocator_result) { true }
       let(:addon_config_updater_result) { true }
-
-      it 'calls grant exchanger service object' do
-        result
-        expect(Heroku::AuthorizationManager::GrantExchanger).to have_received(:call).with(resource)
-      end
-
-      it 'calls resource allocator service object' do
-        result
-        expect(Heroku::ProvisioningManager::ResourceAllocator).to have_received(:call).with(resource)
-      end
-
-      it 'calls addon config updater service object' do
-        result
-        expect(Heroku::ProvisioningManager::AddonConfigUpdater).to have_received(:call).with(resource)
-      end
 
       it "sets resource's state to 'provisioned'" do
         result
