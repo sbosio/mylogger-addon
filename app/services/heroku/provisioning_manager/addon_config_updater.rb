@@ -19,7 +19,7 @@ module Heroku
       # @return [true, false] to notify the caller if the method executed successfully or not.
       #
       def call
-        heroku = PlatformAPI.connect_oauth(@resource.fresh_token)
+        heroku = PlatformAPI.connect_oauth(@resource.fresh_access_token)
         heroku.addon_action.provision @resource.external_id
         true
       rescue StandardError => e

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_04_144640) do
+ActiveRecord::Schema.define(version: 2020_05_11_183533) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,16 @@ ActiveRecord::Schema.define(version: 2020_05_04_144640) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
+  end
+
+  create_table "log_frames", force: :cascade do |t|
+    t.bigint "resource_id"
+    t.integer "message_count"
+    t.string "external_id"
+    t.text "frame_content_ciphertext"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["resource_id"], name: "index_log_frames_on_resource_id"
   end
 
   create_table "resources", force: :cascade do |t|
@@ -51,4 +61,5 @@ ActiveRecord::Schema.define(version: 2020_05_04_144640) do
     t.index ["external_id"], name: "index_resources_on_external_id", unique: true
   end
 
+  add_foreign_key "log_frames", "resources"
 end
