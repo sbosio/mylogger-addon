@@ -22,7 +22,7 @@ module Heroku
         heroku = PlatformAPI.connect_oauth(@resource.fresh_access_token)
         heroku.addon_action.provision @resource.external_id
         true
-      rescue StandardError => e
+      rescue => e
         Rails.logger.error { "Heroku::ProvisioningManager::AddonConfigUpdater unexpected error: #{e.message}" }
         false
       end

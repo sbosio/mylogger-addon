@@ -4,6 +4,8 @@ FactoryBot.define do
   factory :log_frame do
     transient do
       hostname { FFaker::Internet.domain_name }
+      appname { FFaker::Product.brand }
+      procname { "web.1" }
     end
 
     resource { create :resource }
@@ -14,17 +16,24 @@ FactoryBot.define do
       (1..message_count).each do |message_index|
         messages << build_message(message_index)
       end
-      messages.map do |message|
-        "#{message.length} #{message}"
-      end.join("\n")
+      messages.map { |m| "#{m.bytesize} #{m}" }.join
+    end
+
+    trait :with_invalid_format do
+      frame_content do
+        messages = []
+        (1..message_count).each do |message_index|
+          messages << FFaker::Lorem.sentences(Random.rand(1..3)).join("\n") + "\n"
+        end
+        messages.map { |m| "#{m.bytesize} #{m}" }.join
+      end
     end
   end
 end
 
 def build_message(index)
-  message = '<40>1 '
-  message += (Time.current - index.seconds).iso8601 + ' '
-  message += hostname
-  message += ' app web.1 - '
-  message + FFaker::Lorem.sentence
+  message = "<40>1 "
+  message += (Time.current - index.seconds).iso8601.gsub("Z", "+00:00")
+  message += " #{hostname} #{appname} #{procname} - "
+  message + FFaker::Lorem.sentences(Random.rand(1..3)).join("\n") + "\n"
 end

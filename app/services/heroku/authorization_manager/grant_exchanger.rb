@@ -21,7 +21,7 @@ module Heroku
 
         @resource.update!(mapped_response_params)
         true
-      rescue StandardError => e
+      rescue => e
         Rails.logger.error { "Heroku::AuthorizationManager::GrantExchanger unexpected error: #{e.message}" }
         false
       end
@@ -62,7 +62,7 @@ module Heroku
         resp = Faraday.post(Heroku::AuthorizationManager::BASE_URL, payload)
         return resp.body if resp.status == 200
 
-        raise Heroku::AuthorizationManager::GrantExchangeError, JSON.parse(resp.body)['message']
+        raise Heroku::AuthorizationManager::GrantExchangeError, JSON.parse(resp.body)["message"]
       end
     end
   end

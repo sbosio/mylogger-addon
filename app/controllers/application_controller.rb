@@ -16,8 +16,8 @@ class ApplicationController < ActionController::API
   #
   def internal_server_error(exception)
     resp = {
-      id: 'internal_server_error',
-      message: I18n.t('heroku.error_messages.internal_server_error', exception_message: exception.message.tr("\n", ' \ '))
+      id: "internal_server_error",
+      message: I18n.t("heroku.error_messages.internal_server_error", exception_message: exception.message.tr("\n", ' \ '))
     }
 
     render json: resp.to_json, status: :unauthorized, content_type: Heroku::MimeType::ADDON_PARTNER_API
@@ -28,8 +28,8 @@ class ApplicationController < ActionController::API
   #
   def unauthorized
     resp = {
-      id: 'unauthorized',
-      message: I18n.t('heroku.error_messages.unauthorized')
+      id: "unauthorized",
+      message: I18n.t("heroku.error_messages.unauthorized")
     }
 
     render json: resp.to_json, status: :unauthorized, content_type: Heroku::MimeType::ADDON_PARTNER_API
@@ -40,7 +40,7 @@ class ApplicationController < ActionController::API
   #
   def unprocessable_entity(exception)
     resp = {
-      id: 'unprocessable_entity',
+      id: "unprocessable_entity",
       message: exception.message
     }
 

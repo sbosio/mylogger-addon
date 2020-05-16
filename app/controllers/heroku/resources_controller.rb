@@ -51,7 +51,7 @@ module Heroku
       raise NotAuthorizedError unless has_basic_credentials?(request)
 
       user_name, password = user_name_and_password(request).map(&:strip)
-      raise Heroku::NotAuthorizedError unless user_name == ENV['MANIFEST_ID'] && password == ENV['MANIFEST_PASSWORD']
+      raise Heroku::NotAuthorizedError unless user_name == ENV["MANIFEST_ID"] && password == ENV["MANIFEST_PASSWORD"]
     end
 
     #

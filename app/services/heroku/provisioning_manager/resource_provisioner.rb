@@ -27,7 +27,7 @@ module Heroku
 
         @resource.provision_completed!
         true
-      rescue StandardError => e
+      rescue => e
         Rails.logger.error { e.message }
         false
       end

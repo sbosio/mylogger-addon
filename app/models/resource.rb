@@ -7,13 +7,13 @@ class Resource < ApplicationRecord
   #
   # Associations.
   #
-  has_many :log_frames, inverse_of: :resource
+  has_many :log_frames, inverse_of: :resource, dependent: :destroy
 
   #
   # Validations.
   #
   validates :callback_url, :name, :grant_code, :grant_expires_at, :grant_type, :plan, :log_drain_token, :state, presence: true
-  validates :external_id, presence: true, uniqueness: { case_sensitive: false }
+  validates :external_id, presence: true, uniqueness: {case_sensitive: false}
 
   #
   # Lockbox encrypted attributes.
@@ -79,7 +79,7 @@ class Resource < ApplicationRecord
   # @raise [Heroku::UnavailablePlanError] if the plan isn't configured or it's inactive and resource is in an active state.
   #
   def check_plan_availability!
-    return if state.starts_with?('deprovision')
+    return if state.starts_with?("deprovision")
     raise Heroku::UnavailablePlanError unless Heroku::Plan.available?(plan)
   end
 
