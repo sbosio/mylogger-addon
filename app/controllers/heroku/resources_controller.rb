@@ -61,7 +61,7 @@ module Heroku
       {
         id: @resource.external_id,
         message: I18n.t("heroku.resources.provision_requested_for_#{@resource.state}_resource"),
-        log_drain_url: "#{request.protocol}#{request.host_with_port}/logs"
+        log_drain_url: "#{request.protocol}#{request.host_with_port}/log_frames"
       }
     end
 
