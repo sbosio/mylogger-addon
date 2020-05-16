@@ -15,9 +15,9 @@ class CreateResources < ActiveRecord::Migration[5.2]
       t.jsonb :options, default: "'{}'::jsonb"
       t.string :plan, null: false
       t.string :region
-      t.uuid :external_id, null: false, index: { unique: true }
+      t.uuid :external_id, null: false, index: {unique: true}
       t.text :log_drain_token, null: false
-      t.string :state, default: 'pending'
+      t.string :state, default: "pending"
 
       t.timestamps
     end

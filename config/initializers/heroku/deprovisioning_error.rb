@@ -6,7 +6,7 @@ module Heroku
   #
   class DeprovisioningError < StandardError
     def message
-      'The attempt to deprovision the resource failed. See previous log messages.'
+      "The attempt to deprovision the resource failed. See previous log messages."
     end
   end
 end

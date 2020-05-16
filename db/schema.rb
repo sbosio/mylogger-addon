@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_11_183533) do
+ActiveRecord::Schema.define(version: 2020_05_14_140749) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,12 +31,13 @@ ActiveRecord::Schema.define(version: 2020_05_11_183533) do
   end
 
   create_table "log_frames", force: :cascade do |t|
-    t.bigint "resource_id"
-    t.integer "message_count"
-    t.string "external_id"
+    t.bigint "resource_id", null: false
+    t.integer "message_count", null: false
+    t.string "external_id", null: false
     t.text "frame_content_ciphertext"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["external_id"], name: "index_log_frames_on_external_id", unique: true
     t.index ["resource_id"], name: "index_log_frames_on_resource_id"
   end
 

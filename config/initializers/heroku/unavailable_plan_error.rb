@@ -6,7 +6,7 @@ module Heroku
   #
   class UnavailablePlanError < StandardError
     def message
-      I18n.t('heroku.error_messages.unavailable_plan')
+      I18n.t("heroku.error_messages.unavailable_plan")
     end
   end
 end

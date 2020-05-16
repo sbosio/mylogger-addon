@@ -6,7 +6,7 @@ module Heroku
   #
   class ProvisioningError < StandardError
     def message
-      'The attempt to provision the resource failed. See previous log messages.'
+      "The attempt to provision the resource failed. See previous log messages."
     end
   end
 end

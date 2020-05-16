@@ -8,12 +8,12 @@ module Heroku
     #
     # MIME type used by Heroku Addon Partner API version 3.
     #
-    ADDON_PARTNER_API = 'application/vnd.heroku-addons+json; version=3'
+    ADDON_PARTNER_API = "application/vnd.heroku-addons+json; version=3"
 
     #
     # MIME type used by Heroku Platform API version 3.
     #
-    PLATFORM_API = 'application/vnd.heroku+json; version=3'
+    PLATFORM_API = "application/vnd.heroku+json; version=3"
 
     class << self
       #

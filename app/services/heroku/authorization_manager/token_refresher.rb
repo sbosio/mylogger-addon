@@ -20,7 +20,7 @@ module Heroku
 
         @resource.update!(mapped_response_params)
         @resource.access_token
-      rescue StandardError => e
+      rescue => e
         Rails.logger.error { "Heroku::AuthorizationManager::TokenRefresher unexpected error: #{e.message}" }
         nil
       end
@@ -32,7 +32,7 @@ module Heroku
       #
       def payload
         {
-          grant_type: 'refresh_token',
+          grant_type: "refresh_token",
           refresh_token: @resource.refresh_token,
           client_secret: Rails.application.credentials.partner_portal_client_secret
         }
@@ -60,7 +60,7 @@ module Heroku
         resp = Faraday.post(Heroku::AuthorizationManager::BASE_URL, payload)
         return resp.body if resp.status == 200
 
-        raise Heroku::AuthorizationManager::TokenRefreshError, JSON.parse(resp.body)['message']
+        raise Heroku::AuthorizationManager::TokenRefreshError, JSON.parse(resp.body)["message"]
       end
     end
   end

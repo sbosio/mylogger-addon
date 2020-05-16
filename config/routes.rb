@@ -6,8 +6,10 @@ Rails.application.routes.draw do
   # Heroku's resource provisioning and deprovisioning endpoints
   namespace :heroku do
     resources :resources, only: %i[create destroy],
-                          constraints: ->(req) { req.headers['Accept'] == Heroku::MimeType::ADDON_PARTNER_API }
+                          constraints: ->(req) { req.headers["Accept"] == Heroku::MimeType::ADDON_PARTNER_API }
 
-    match '*path' => 'errors#not_found', via: :all
+    match "*path" => "errors#not_found", :via => :all
   end
+
+  resources :log_frames, only: :create
 end
