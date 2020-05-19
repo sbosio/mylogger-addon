@@ -68,7 +68,7 @@ class Resource < ApplicationRecord
   # @return [Integer] count of log messages
   #
   def log_messages_count
-    log_frames.sum(:message_count)
+    @log_messages_count ||= log_frames.sum(:message_count)
   end
 
   private

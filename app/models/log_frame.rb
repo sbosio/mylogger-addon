@@ -12,8 +12,7 @@ class LogFrame < ApplicationRecord
   #
   # Validations.
   #
-  validates :resource, :message_count, :frame_content, presence: true
-  validates :external_id, presence: true, uniqueness: {case_sensitive: false}
+  validates :resource, :message_count, :external_id, :frame_content, presence: true
   validate :check_frame_content
 
   #
@@ -22,7 +21,7 @@ class LogFrame < ApplicationRecord
   encrypts :frame_content
 
   #
-  # Parses the frame content and returns an array 
+  # Parses the frame content and returns an array of `LogMessage` instances initialized from the frame content.
   #
   def log_messages
     @log_messages ||= parse_frame_content
