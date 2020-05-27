@@ -18,6 +18,8 @@ FactoryBot.define do
       end
       messages.map { |m| "#{m.bytesize} #{m}" }.join
     end
+    created_at { Time.current }
+    updated_at { created_at }
 
     trait :with_invalid_format do
       frame_content do

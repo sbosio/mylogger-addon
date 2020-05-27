@@ -7,10 +7,10 @@ module Heroku
   class Plan
     CONFIGURED_PLANS = {
       test: {
-        max_log_lines: 1_000,
+        max_log_messages: 1_000,
         active: true
       }
-    }.with_indifferent_access.freeze
+    }.with_indifferent_access
 
     def self.available?(plan)
       CONFIGURED_PLANS.dig(plan.to_sym, :active)

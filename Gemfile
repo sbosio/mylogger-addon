@@ -41,6 +41,15 @@ gem "lockbox"
 # Heroku Platform API Ruby client
 gem "platform-api"
 
+# Bootstrap for our dashboard
+gem "bootstrap"
+
+# Why using ERB when you have HAML?
+gem "haml"
+
+# JQuery for Bootstrap/AdminSB Theme
+gem "jquery-rails"
+
 group :development, :test do
   gem "byebug", platforms: %i[mri mingw x64_mingw]
   gem "dotenv-rails"
@@ -68,6 +77,7 @@ group :test do
   gem "database_cleaner"
   gem "factory_bot"
   gem "fuubar"
+  gem "rails-controller-testing"
   gem "rspec"
   gem "rspec-rails"
   gem "should_not"

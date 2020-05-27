@@ -4,7 +4,7 @@ module Heroku
   #
   # Resources controller actions for Heroku's provisioning and deprovisioning endpoints.
   #
-  class ResourcesController < ApplicationController
+  class ResourcesController < ApiController
     include ActionController::HttpAuthentication::Basic
     before_action :authenticate!
 

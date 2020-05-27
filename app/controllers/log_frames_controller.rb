@@ -10,14 +10,9 @@ class LogFramesController < ApplicationController
   # POST /log_frames
   #
   def create
-    @resource.log_frames.create!(
-      message_count: header_params[:message_count],
-      external_id: header_params[:external_id],
-      frame_content: request.raw_post
-    )
+    head(:unprocessable_entity, content_length: 0) && return unless LogFramesManager.call(@resource, create_params)
+
     head :created, content_length: 0
-  rescue
-    head :unprocessable_entity, content_length: 0
   end
 
   private
@@ -40,6 +35,17 @@ class LogFramesController < ApplicationController
       drain_token: request.headers["Logplex-Drain-Token"],
       message_count: request.headers["Logplex-Msg-Count"],
       external_id: request.headers["Logplex-Frame-Id"]
+    }
+  end
+
+  #
+  # Maps POST request info to LogFrame attributes.
+  #
+  def create_params
+    {
+      message_count: header_params[:message_count],
+      external_id: header_params[:external_id],
+      frame_content: request.raw_post
     }
   end
 end
