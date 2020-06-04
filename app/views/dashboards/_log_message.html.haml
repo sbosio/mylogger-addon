@@ -1,8 +1,7 @@
 %tr
-  %td= log_message.priority
-  %td= log_message.timestamp
-  %td= log_message.host
+  %td.nowrap= log_message.priority
+  %td.nowrap= log_message.timestamp.iso8601.split("+").first
+  %td.nowrap= log_message.host
   %td= log_message.application
   %td= log_message.process
-  %td
-    %pre= log_message.message.chomp
+  %td= html_escape(log_message.message.chomp).gsub("\n", "<br/>").html_safe

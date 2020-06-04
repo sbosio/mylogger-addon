@@ -1,5 +1,5 @@
 # Application version
-APP_VERSION = "1.0".freeze
+APP_VERSION = "1.0.1".freeze
 
 # Load the Rails application.
 require_relative "application"
