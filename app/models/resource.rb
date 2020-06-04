@@ -77,7 +77,7 @@ class Resource < ApplicationRecord
   # @return [Array<LogMessage>] all log messages for this resource.
   #
   def log_messages
-    log_frames.order(:created_at).map(&:log_messages).flatten.reverse
+    log_frames.order(:created_at).map(&:log_messages).flatten
   end
 
   #
