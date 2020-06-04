@@ -91,6 +91,7 @@ GEM
       activesupport (>= 4.2)
     ffaker (2.15.0)
     ffi (1.13.0)
+    flock_synchronize (1.2.0)
     font_awesome5_rails (1.1.1)
       railties (>= 4.2)
     fuubar (2.5.0)
@@ -336,6 +337,7 @@ DEPENDENCIES
   faraday
   fast_jsonapi
   ffaker
+  flock_synchronize
   font_awesome5_rails
   fuubar
   haml

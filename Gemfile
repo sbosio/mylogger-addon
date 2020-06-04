@@ -48,6 +48,9 @@ gem "jquery-datatables"
 gem "jquery-easing-rails"
 gem "jquery-rails"
 
+# FlockSynchronize for process synchronization
+gem "flock_synchronize"
+
 # Why using ERB templates for HTML when you have HAML?
 gem "haml"
 
