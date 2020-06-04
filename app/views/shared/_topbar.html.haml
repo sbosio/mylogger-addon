@@ -1,0 +1,86 @@
+/ Topbar
+%nav.navbar.navbar-expand.navbar-light.bg-white.topbar.mb-4.static-top.shadow
+  / Sidebar Toggle (Topbar)
+  %button#sidebarToggleTop.btn.btn-link.d-md-none.rounded-circle.mr-3
+    %i.fa.fa-bars
+  / Topbar Search
+  %form.d-none.d-sm-inline-block.form-inline.mr-auto.ml-md-3.my-2.my-md-0.mw-100.navbar-search
+    .input-group
+      %input.form-control.bg-light.border-0.small{"aria-describedby" => "basic-addon2", "aria-label" => "Search", :placeholder => "Search for...", :type => "text"}/
+      .input-group-append
+        %button.btn.btn-primary{:type => "button"}
+          %i.fas.fa-search.fa-sm
+  / Topbar Navbar
+  %ul.navbar-nav.ml-auto
+    / Nav Item - Search Dropdown (Visible Only XS)
+    %li.nav-item.dropdown.no-arrow.d-sm-none
+      %a#searchDropdown.nav-link.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        %i.fas.fa-search.fa-fw
+      / Dropdown - Messages
+      .dropdown-menu.dropdown-menu-right.p-3.shadow.animated--grow-in{"aria-labelledby" => "searchDropdown"}
+        %form.form-inline.mr-auto.w-100.navbar-search
+          .input-group
+            %input.form-control.bg-light.border-0.small{"aria-describedby" => "basic-addon2", "aria-label" => "Search", :placeholder => "Search for...", :type => "text"}/
+            .input-group-append
+              %button.btn.btn-primary{:type => "button"}
+                %i.fas.fa-search.fa-sm
+    / Nav Item - Alerts
+    %li.nav-item.dropdown.no-arrow.mx-1
+      %a#alertsDropdown.nav-link.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        %i.fas.fa-bell.fa-fw
+        / Counter - Alerts
+        %span.badge.badge-danger.badge-counter 1
+      / Dropdown - Alerts
+      .dropdown-list.dropdown-menu.dropdown-menu-right.shadow.animated--grow-in{"aria-labelledby" => "alertsDropdown"}
+        %h6.dropdown-header
+          Alerts Center
+        %a.dropdown-item.d-flex.align-items-center{:href => "#"}
+          .mr-3
+            .icon-circle.bg-danger
+              %i.fas.fa-exclamation-triangle.text-white
+          %div
+            .small.text-gray-500
+              - first_notification = Time.current - Random::rand(1..999).seconds
+              = time_ago_in_words(first_notification)
+            %span.font-weight-bold Monitor 1: critical condition signaled
+        %a.dropdown-item.d-flex.align-items-center{:href => "#"}
+          .mr-3
+            .icon-circle.bg-success
+              %i.fas.fa-check-square.text-white
+          %div
+            .small.text-gray-500
+              - second_notification = first_notification - Random::rand(1..999).seconds
+              = time_ago_in_words(second_notification)
+            Monitor 4: returned to normal state after 18 minutes in warning condition (acknowledged)
+        %a.dropdown-item.d-flex.align-items-center{:href => "#"}
+          .mr-3
+            .icon-circle.bg-warning
+              %i.fas.fa-info.text-white
+          %div
+            .small.text-gray-500
+              - third_notification = second_notification - Random::rand(1..999).seconds
+              = time_ago_in_words(third_notification)
+            Monitor 2: warning condition signaled
+        %a.dropdown-item.text-center.small.text-gray-500{:href => "#"} Show All Alerts
+    .topbar-divider.d-none.d-sm-block
+    / Nav Item - User Information
+    %li.nav-item.dropdown.no-arrow
+      %a#userDropdown.nav-link.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        %span.mr-2.d-none.d-lg-inline.text-gray-600.small Heroku App Addon
+        %img.img-profile.rounded-circle{:src => asset_path("heroku-logo-stroke-gradient.svg")}/
+      / Dropdown - User Information
+      .dropdown-menu.dropdown-menu-right.shadow.animated--grow-in{"aria-labelledby" => "userDropdown"}
+        -#%a.dropdown-item{:href => "#"}
+          %i.fas.fa-user.fa-sm.fa-fw.mr-2.text-gray-400
+          Profile
+        -#%a.dropdown-item{:href => "#"}
+          %i.fas.fa-cogs.fa-sm.fa-fw.mr-2.text-gray-400
+          Settings
+        -#%a.dropdown-item{:href => "#"}
+          %i.fas.fa-list.fa-sm.fa-fw.mr-2.text-gray-400
+          Activity Log
+        -#.dropdown-divider
+        %a.dropdown-item{"data-target" => "#logoutModal", "data-toggle" => "modal", :href => "#"}
+          %i.fas.fa-sign-out-alt.fa-sm.fa-fw.mr-2.text-gray-400
+          Logout
+/ End of Topbar

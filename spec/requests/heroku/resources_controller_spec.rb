@@ -2,6 +2,7 @@
 
 require "rails_helper"
 require "support/shared_examples/basic_auth"
+require "support/shared_examples/heroku_api_controller"
 
 describe Heroku::ResourcesController, type: :request do
   let(:content_type) { Heroku::MimeType::ADDON_PARTNER_API }
@@ -16,6 +17,19 @@ describe Heroku::ResourcesController, type: :request do
 
   before do
     public_send method.to_s, endpoint, params: params, headers: headers
+  end
+
+  describe "request to our namespace with an invalid route or HTTP verb" do
+    let(:endpoint) { "/heroku/unexistent" }
+    let(:method) { "post" }
+    let(:params) { nil }
+    let(:headers) { nil }
+
+    it "returns a not found status code" do
+      expect(response).to be_not_found
+    end
+
+    it_behaves_like "a Heroku::ApiController endpoint"
   end
 
   describe "#create (provisioning)" do
@@ -46,6 +60,8 @@ describe Heroku::ResourcesController, type: :request do
       it "returns an accepted status code" do
         expect(response).to be_accepted
       end
+
+      it_behaves_like "a Heroku::ApiController endpoint"
     end
 
     context "with an unexistent plan" do
@@ -54,6 +70,8 @@ describe Heroku::ResourcesController, type: :request do
       it "returns an unprocessable entity status code" do
         expect(response).to be_unprocessable
       end
+
+      it_behaves_like "a Heroku::ApiController endpoint"
     end
 
     context "when a resource with the same external id exists" do
@@ -81,6 +99,8 @@ describe Heroku::ResourcesController, type: :request do
         it "returns an accepted status code" do
           expect(response).to be_accepted
         end
+
+        it_behaves_like "a Heroku::ApiController endpoint"
       end
 
       context "with a provisioned state" do
@@ -89,6 +109,8 @@ describe Heroku::ResourcesController, type: :request do
         it "returns an accepted status code" do
           expect(response).to be_accepted
         end
+
+        it_behaves_like "a Heroku::ApiController endpoint"
       end
 
       context "with an invalid state for provisioning" do
@@ -97,6 +119,8 @@ describe Heroku::ResourcesController, type: :request do
         it "returns an unprocessable entity status code" do
           expect(response).to be_unprocessable
         end
+
+        it_behaves_like "a Heroku::ApiController endpoint"
       end
     end
   end
@@ -113,14 +137,18 @@ describe Heroku::ResourcesController, type: :request do
       it "returns a no content status code" do
         expect(response).to be_no_content
       end
+
+      it_behaves_like "a Heroku::ApiController endpoint"
     end
 
-    context "when the resource was already deprovisioned" do
+    context "when the resource isn't in a valid state for deprovisioning" do
       let(:resource) { create :resource, state: "deprovisioned" }
 
-      it "returns a no content status code" do
-        expect(response).to be_no_content
+      it "returns a gone status code" do
+        expect(response.status).to eq(410)
       end
+
+      it_behaves_like "a Heroku::ApiController endpoint"
     end
   end
 end

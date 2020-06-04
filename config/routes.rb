@@ -15,7 +15,12 @@ Rails.application.routes.draw do
     delete :logout, to: "sessions#destroy", as: :logout
   end
 
-  resources :log_frames, only: :create
+  namespace :logplex do
+    resources :log_frames, only: :create,
+                           constraints: ->(req) { req.headers["Content-Type"] == "application/logplex-1" }
+    post "log_frames", to: "errors#unsupported_media_type"
+    match "*path" => "errors#not_found", :via => :all
+  end
 
   root to: "dashboards#show", as: :dashboard
 end

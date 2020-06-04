@@ -4,12 +4,11 @@
 # Resource dashboard.
 #
 class DashboardsController < ApplicationController
-  # before_action :authenticate_sso_login!
-
   #
   # GET /
   #
   def show
-    render :show, layout: false
+    @resource = Resource.with_state(:provisioned).find(session[:resource_id])
+    @plan = Heroku::Plan::CONFIGURED_PLANS[@resource.plan]
   end
 end

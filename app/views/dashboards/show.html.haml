@@ -1,0 +1,83 @@
+/ Page Heading
+.d-sm-flex.align-items-center.justify-content-between.mb-4
+  %h1.h3.mb-0.text-gray-800 Dashboard
+  %a.d-none.d-sm-inline-block.btn.btn-sm.btn-primary.shadow-sm{:href => "#"}
+    %i.fas.fa-download.fa-sm.text-white-50
+    Download logs
+/ Content Row
+.row
+  / Plan monthly cost.
+  .col-xl-3.col-md-6.mb-4
+    .card.border-left-primary.shadow.h-100.py-2
+      .card-body
+        .row.no-gutters.align-items-center
+          .col.mr-2
+            .text-xs.font-weight-bold.text-primary.text-uppercase.mb-1
+              = @plan[:name]
+              Plan Cost (monthly)
+            .h5.mb-0.font-weight-bold.text-gray-800
+              = number_to_currency(@plan[:monthly_cents] / 100.0)
+          .col-auto
+            %i.fas.fa-dollar-sign.fa-2x.text-gray-300
+  / Plan limits
+  .col-xl-3.col-md-6.mb-4
+    .card.border-left-primary.shadow.h-100.py-2
+      .card-body
+        .row.no-gutters.align-items-center
+          .col.mr-2
+            .text-xs.font-weight-bold.text-primary.text-uppercase.mb-1
+              = @plan[:name]
+              Plan Limit (max log messages)
+            .h5.mb-0.font-weight-bold.text-gray-800
+              = number_with_delimiter(@plan[:max_log_messages])
+          .col-auto
+            %i.fas.fa-th-list.fa-2x.text-gray-300
+  / Percentage used
+  .col-xl-3.col-md-6.mb-4
+    .card.border-left-info.shadow.h-100.py-2
+      .card-body
+        .row.no-gutters.align-items-center
+          .col.mr-2
+            .text-xs.font-weight-bold.text-info.text-uppercase.mb-1 Plan Limit Consumed (percentage)
+            .row.no-gutters.align-items-center
+              .col-auto
+                .h5.mb-0.mr-3.font-weight-bold.text-gray-800
+                  - percentage = (@resource.log_messages_count.to_d / @plan[:max_log_messages].to_d * 100.0).round(1)
+                  = number_to_percentage(percentage, precision: 1)
+              .col
+                .progress.progress-sm.mr-2
+                  .progress-bar.bg-info{"aria-valuemax" => "100", "aria-valuemin" => "0", "aria-valuenow" => percentage.to_s, :role => "progressbar", :style => "width: #{percentage}%"}
+          .col-auto
+            %i.fas.fa-database.fa-2x.text-gray-300
+  / Average retention
+  .col-xl-3.col-md-6.mb-4
+    .card.border-left-warning.shadow.h-100.py-2
+      .card-body
+        .row.no-gutters.align-items-center
+          .col.mr-2
+            .text-xs.font-weight-bold.text-warning.text-uppercase.mb-1 Average retention
+            .h5.mb-0.font-weight-bold.text-gray-800
+              = time_ago_in_words(@resource.average_retention.seconds.ago)
+          .col-auto
+            %i.fas.fa-calendar.fa-2x.text-gray-300
+/ Content Row
+.row
+  .col-lg-12
+    / Log messages
+    .card.shadow.mb-4
+      .card-header.py-3
+        %h6.m-0.font-weight-bold.text-primary Log messages
+      .card-body
+        .table-responsive
+          %table#log_messages.datatable.table.table-bordered.table-responsive{:cellspacing => "0", :width => "100%"}
+            %thead
+              %tr
+                %th Priority
+                %th Timestamp
+                %th Host
+                %th Application
+                %th Process
+                %th Message
+            %tbody
+              = render partial: "log_message", collection: @resource.log_messages
+/ /.container-fluid

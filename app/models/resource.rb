@@ -39,7 +39,7 @@ class Resource < ApplicationRecord
     end
     event :deprovision do
       transition provisioned: :deprovisioning
-      transition %i[deprovisioning deprovisioned] => same
+      transition deprovisioning: same
     end
     after_transition to: :deprovisioning, do: :deprovision_resource
     event :deprovision_completed do
@@ -71,6 +71,28 @@ class Resource < ApplicationRecord
     @log_messages_count ||= log_frames.sum(:message_count)
   end
 
+  #
+  # Returns an array with all `LogMessage` instances for this resource.
+  #
+  # @return [Array<LogMessage>] all log messages for this resource.
+  #
+  def log_messages
+    log_frames.order(:created_at).map(&:log_messages).flatten.reverse
+  end
+
+  #
+  # Returns the average interval of retention for log frames, expresed in seconds.
+  #
+  # @return [Integer] total number of seconds.
+  #
+  def average_retention
+    log_frames_timespan = Time.current - (log_frames.minimum(:created_at) || created_at)
+    log_messages_per_second = log_messages_count / log_frames_timespan
+    return (max_log_messages * 1_000) if log_messages_per_second.zero?
+
+    (max_log_messages / log_messages_per_second).to_i
+  end
+
   private
 
   #
@@ -88,6 +110,15 @@ class Resource < ApplicationRecord
   #
   def deprovision_resource
     Heroku::DeprovisioningJob.perform_later id
+  end
+
+  #
+  # Returns this resource's max log messages limit according to the configured plan.
+  #
+  # @return [Integer] plan max log messages.
+  #
+  def max_log_messages
+    Heroku::Plan::CONFIGURED_PLANS.dig(plan, :max_log_messages)
   end
 
   #

@@ -7,8 +7,10 @@ module Heroku
   class Plan
     CONFIGURED_PLANS = {
       test: {
+        name: "Test",
         max_log_messages: 1_000,
-        active: true
+        active: true,
+        monthly_cents: 0
       }
     }.with_indifferent_access
 

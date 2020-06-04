@@ -4,7 +4,7 @@ module Heroku
   #
   # Handles responses when errors arise to set correct messages and response statuses.
   #
-  class ErrorsController < ApiController
+  class ErrorsController < Heroku::ApiController
     #
     # Default response for 404 Not Found error, unexistent routes or invalid format requests.
     #

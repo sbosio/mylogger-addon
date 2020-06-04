@@ -1,0 +1,8 @@
+%tr
+  %td= log_message.priority
+  %td= log_message.timestamp
+  %td= log_message.host
+  %td= log_message.application
+  %td= log_message.process
+  %td
+    %pre= log_message.message.chomp

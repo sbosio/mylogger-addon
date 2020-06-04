@@ -5,7 +5,8 @@ module Sso
   # Heroku SSO session management.
   #
   class SessionsController < ApplicationController
-    skip_before_action :verify_authenticity_token
+    skip_before_action :verify_authenticity_token, only: :create
+    skip_before_action :authenticate_sso_login!, only: :create
     before_action :check_login_params, only: :create
     before_action :set_resource, only: :create
 
@@ -23,8 +24,6 @@ module Sso
     # DELETE '/sso/log_out'
     #
     def destroy
-      forbidden && return unless session[:resource_id].present?
-
       session[:resource_id] = nil
       render :destroy, layout: false
     end
