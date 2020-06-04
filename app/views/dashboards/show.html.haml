@@ -26,8 +26,7 @@
         .row.no-gutters.align-items-center
           .col.mr-2
             .text-xs.font-weight-bold.text-primary.text-uppercase.mb-1
-              = @plan[:name]
-              Plan Limit (max log messages)
+              Plan Limit (max messages)
             .h5.mb-0.font-weight-bold.text-gray-800
               = number_with_delimiter(@plan[:max_log_messages])
           .col-auto
@@ -38,7 +37,7 @@
       .card-body
         .row.no-gutters.align-items-center
           .col.mr-2
-            .text-xs.font-weight-bold.text-info.text-uppercase.mb-1 Plan Limit Consumed (percentage)
+            .text-xs.font-weight-bold.text-info.text-uppercase.mb-1 Used (percentage)
             .row.no-gutters.align-items-center
               .col-auto
                 .h5.mb-0.mr-3.font-weight-bold.text-gray-800
@@ -69,7 +68,7 @@
         %h6.m-0.font-weight-bold.text-primary Log messages
       .card-body
         .table-responsive
-          %table#log_messages.datatable.table.table-bordered.table-responsive{:cellspacing => "0", :width => "100%"}
+          %table#log_messages_table.table.table-bordered.table-responsive{:cellspacing => "0", :width => "100%"}
             %thead
               %tr
                 %th Priority
