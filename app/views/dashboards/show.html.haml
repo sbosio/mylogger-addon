@@ -41,7 +41,7 @@
             .row.no-gutters.align-items-center
               .col-auto
                 .h5.mb-0.mr-3.font-weight-bold.text-gray-800
-                  - percentage = (@resource.log_messages_count.to_d / @plan[:max_log_messages].to_d * 100.0).round(1)
+                  - percentage = [100.0, @resource.log_messages_count.to_d / @plan[:max_log_messages].to_d * 100.0].min.round(1)
                   = number_to_percentage(percentage, precision: 1)
               .col
                 .progress.progress-sm.mr-2
