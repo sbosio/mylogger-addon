@@ -41,14 +41,15 @@ gem "lockbox"
 # Heroku Platform API Ruby client
 gem "platform-api"
 
-# Bootstrap for our dashboard
+# Gems for our dashboard
 gem "bootstrap"
-
-# Why using ERB when you have HAML?
-gem "haml"
-
-# JQuery for Bootstrap/AdminSB Theme
+gem "font_awesome5_rails"
+gem "jquery-datatables"
+gem "jquery-easing-rails"
 gem "jquery-rails"
+
+# Why using ERB templates for HTML when you have HAML?
+gem "haml"
 
 group :development, :test do
   gem "byebug", platforms: %i[mri mingw x64_mingw]

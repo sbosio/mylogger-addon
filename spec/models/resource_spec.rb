@@ -60,4 +60,26 @@ describe Resource, type: :model do
       expect(resource.log_messages_count).to eq(log_messages_count)
     end
   end
+
+  describe "#log_messages" do
+    let(:resource) { create :resource, :with_tokens, state: "provisioned" }
+    let(:log_frames) { create_list(:log_frame, Random.rand(0..5), resource: resource) }
+
+    it "returns an array with a size equal to the total count of log messages" do
+      log_messages_count = log_frames.map(&:message_count).sum
+      expect(resource.log_messages.size).to eq(log_messages_count)
+    end
+  end
+
+  describe "#average_retention" do
+    let(:resource) { create :resource, :with_tokens, state: "provisioned" }
+    let(:older_log_frame) { create :log_frame, resource: resource, created_at: Time.new(2020, 4, 25, 12) }
+    let(:newer_log_frame) { create :log_frame, resource: resource }
+
+    it "returns the correct amount of seconds" do
+      allow(Time).to receive(:current).and_return(Time.new(2020, 4, 25, 12, 10))
+      log_messages_count = older_log_frame.message_count + newer_log_frame.message_count
+      expect(resource.average_retention).to eq(1_000 * 600 / log_messages_count)
+    end
+  end
 end

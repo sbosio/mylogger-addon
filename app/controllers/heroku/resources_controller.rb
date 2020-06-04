@@ -4,8 +4,9 @@ module Heroku
   #
   # Resources controller actions for Heroku's provisioning and deprovisioning endpoints.
   #
-  class ResourcesController < ApiController
+  class ResourcesController < Heroku::ApiController
     include ActionController::HttpAuthentication::Basic
+    include ActiveSupport::SecurityUtils
     before_action :authenticate!
 
     #
@@ -51,7 +52,9 @@ module Heroku
       raise NotAuthorizedError unless has_basic_credentials?(request)
 
       user_name, password = user_name_and_password(request).map(&:strip)
-      raise Heroku::NotAuthorizedError unless user_name == ENV["MANIFEST_ID"] && password == ENV["MANIFEST_PASSWORD"]
+      unless secure_compare(user_name, ENV["MANIFEST_ID"]) && secure_compare(password, ENV["MANIFEST_PASSWORD"])
+        raise Heroku::NotAuthorizedError
+      end
     end
 
     #
@@ -61,7 +64,7 @@ module Heroku
       {
         id: @resource.external_id,
         message: I18n.t("heroku.resources.provision_requested_for_#{@resource.state}_resource"),
-        log_drain_url: "#{request.protocol}#{request.host_with_port}/log_frames"
+        log_drain_url: "#{request.protocol}#{request.host_with_port}/logplex/log_frames"
       }
     end
 

@@ -1,0 +1,47 @@
+/ Sidebar
+%ul#accordionSidebar.navbar-nav.bg-gradient-primary.sidebar.sidebar-dark.accordion
+  / Sidebar - Brand
+  %a.sidebar-brand.d-flex.align-items-center.justify-content-center{:href => dashboard_path}
+    .sidebar-brand-icon.rotate-n-15
+      %i.fas.fa-pen-nib
+    .sidebar-brand-text.mx-3
+      Mylogger
+  / Divider
+  %hr.sidebar-divider.my-0/
+  / Nav Item - Dashboard
+  %li.nav-item.active
+    %a.nav-link{:href => dashboard_path}
+      %i.fas.fa-fw.fa-tachometer-alt
+      %span Dashboard
+  / Divider
+  %hr.sidebar-divider/
+  / Heading
+  .sidebar-heading
+    Settings
+  / Nav Item - Pages Collapse Menu
+  %li.nav-item
+    %a.nav-link.collapsed{"aria-controls" => "collapseTwo", "aria-expanded" => "true", "data-target" => "#collapseTwo", "data-toggle" => "collapse", :href => "#"}
+      %i.fas.fa-fw.fa-cog
+      %span Components
+    #collapseTwo.collapse{"aria-labelledby" => "headingTwo", "data-parent" => "#accordionSidebar"}
+      .bg-white.py-2.collapse-inner.rounded
+        %h6.collapse-header Custom components:
+        %a.collapse-item{:href => "#"} Monitors
+        %a.collapse-item{:href => "#"} Alerts
+  / Nav Item - Utilities Collapse Menu
+  %li.nav-item
+    %a.nav-link.collapsed{"aria-controls" => "collapseUtilities", "aria-expanded" => "true", "data-target" => "#collapseUtilities", "data-toggle" => "collapse", :href => "#"}
+      %i.fas.fa-fw.fa-wrench
+      %span Utilities
+    #collapseUtilities.collapse{"aria-labelledby" => "headingUtilities", "data-parent" => "#accordionSidebar"}
+      .bg-white.py-2.collapse-inner.rounded
+        %h6.collapse-header Custom Utilities:
+        %a.collapse-item{:href => "#"} Export data
+        %a.collapse-item{:href => "#"} Clear log
+        %a.collapse-item{:href => "#"} Log rotation
+  / Divider
+  %hr.sidebar-divider.d-none.d-md-block/
+  / Sidebar Toggler (Sidebar)
+  .text-center.d-none.d-md-inline
+    %button#sidebarToggle.rounded-circle.border-0
+/ End of Sidebar
