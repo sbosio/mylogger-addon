@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/ebababi/yard-state_machines.git
+  revision: eaf3ead8f78e4ad7c0e36fc827bddc08d3a710bb
+  specs:
+    yard-state_machines (0.0.1)
+      state_machines-graphviz
+      yard
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -59,6 +67,7 @@ GEM
       sassc-rails (>= 2.0.0)
     builder (3.2.4)
     byebug (11.1.3)
+    choice (0.2.0)
     code_analyzer (0.5.1)
       sexp_processor
     coderay (1.1.3)
@@ -91,6 +100,7 @@ GEM
       activesupport (>= 4.2)
     ffaker (2.15.0)
     ffi (1.13.0)
+    flock_synchronize (1.2.0)
     font_awesome5_rails (1.1.1)
       railties (>= 4.2)
     fuubar (2.5.0)
@@ -188,6 +198,11 @@ GEM
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
+    rails-erd (1.6.0)
+      activerecord (>= 4.2)
+      activesupport (>= 4.2)
+      choice (~> 0.2.0)
+      ruby-graphviz (~> 1.2)
     rails-html-sanitizer (1.3.0)
       loofah (~> 2.3)
     rails_best_practices (1.20.0)
@@ -247,6 +262,8 @@ GEM
       rubocop (>= 0.71.0)
     rubocop-rspec (1.39.0)
       rubocop (>= 0.68.1)
+    ruby-graphviz (1.2.5)
+      rexml
     ruby-progressbar (1.10.1)
     ruby_dep (1.5.0)
     safe_yaml (1.0.5)
@@ -301,6 +318,9 @@ GEM
     state_machines-activerecord (0.6.0)
       activerecord (>= 4.1)
       state_machines-activemodel (>= 0.5.0)
+    state_machines-graphviz (0.0.2)
+      ruby-graphviz
+      state_machines
     state_machines-rspec (0.6.0)
       activesupport
       rspec (~> 3.3)
@@ -336,6 +356,7 @@ DEPENDENCIES
   faraday
   fast_jsonapi
   ffaker
+  flock_synchronize
   font_awesome5_rails
   fuubar
   haml
@@ -352,6 +373,7 @@ DEPENDENCIES
   puma (~> 3.11)
   rails (~> 5.2.4, >= 5.2.4.3)
   rails-controller-testing
+  rails-erd
   rails_best_practices
   ripper-tags
   rspec
@@ -367,9 +389,11 @@ DEPENDENCIES
   spring-watcher-listen (~> 2.0.0)
   standard (~> 0.4)
   state_machines-activerecord
+  state_machines-graphviz
   state_machines-rspec
   webmock
   yard
+  yard-state_machines!
 
 RUBY VERSION
    ruby 2.6.6p146

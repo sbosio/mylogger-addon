@@ -16,10 +16,12 @@ class LogFramesManager < ApplicationService
   # @return [true, false] to notify the caller if the method executed successfully or not.
   #
   def call
-    LogFrame.transaction do
-      @log_frame = @resource.log_frames.create!(@params)
-      return true unless limit_exceeded?
-      enforce_limit!
+    FlockSynchronize.flock_synchronize(locking_key) do
+      LogFrame.transaction do
+        @log_frame = @resource.log_frames.create!(@params)
+        return true unless limit_exceeded?
+        enforce_limit!
+      end
     end
   rescue ActiveRecord::RecordNotUnique
     Rails.logger.warn { "LogFramesManager: duplicated frame!" }
@@ -30,16 +32,6 @@ class LogFramesManager < ApplicationService
   end
 
   private
-
-  #
-  # Returns whether the resource exceeds the maximum permitted by the current plan.
-  #
-  # @return [true, false]
-  #
-  def limit_exceeded?
-    return true if @resource.log_messages_count > @max_log_messages
-    false
-  end
 
   #
   # Deletes older log frames when the total messages count exceeds the limit, keeping at least the maximum set.
@@ -53,5 +45,22 @@ class LogFramesManager < ApplicationService
     end
     LogFrame.where(resource_id: @resource.id, id: selected.map(&:id)).delete_all
     true
+  end
+
+  #
+  # Returns a locking key for the targeted resource that changes every 10 seconds.
+  #
+  def locking_key
+    "resource_#{@external_id}_#{Time.current.iso8601.gsub(/(:\d)[^:]+\z/, '\10')}"
+  end
+
+  #
+  # Returns whether the resource exceeds the maximum permitted by the current plan.
+  #
+  # @return [true, false]
+  #
+  def limit_exceeded?
+    return true if @resource.reload.log_messages_count > @max_log_messages
+    false
   end
 end

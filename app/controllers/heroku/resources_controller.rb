@@ -53,7 +53,7 @@ module Heroku
 
       user_name, password = user_name_and_password(request).map(&:strip)
       unless secure_compare(user_name, ENV["MANIFEST_ID"]) && secure_compare(password, ENV["MANIFEST_PASSWORD"])
-        raise Heroku::NotAuthorizedError
+        raise NotAuthorizedError
       end
     end
 

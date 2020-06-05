@@ -31,3 +31,6 @@
 
 # Ignore ripper-tags TAGS file
 /TAGS
+
+# Ignore Yard working files
+/.yarddoc/*

@@ -48,6 +48,9 @@ gem "jquery-datatables"
 gem "jquery-easing-rails"
 gem "jquery-rails"
 
+# FlockSynchronize for process synchronization
+gem "flock_synchronize"
+
 # Why using ERB templates for HTML when you have HAML?
 gem "haml"
 
@@ -63,6 +66,7 @@ end
 group :development do
   gem "listen", ">= 3.0.5", "< 3.2"
   gem "rails_best_practices"
+  gem "rails-erd"
   gem "ripper-tags"
   gem "rubocop"
   gem "rubocop-performance"
@@ -71,7 +75,9 @@ group :development do
   gem "spring"
   gem "spring-watcher-listen", "~> 2.0.0"
   gem "standard", "~> 0.4"
+  gem "state_machines-graphviz"
   gem "yard"
+  gem "yard-state_machines", github: "ebababi/yard-state_machines"
 end
 
 group :test do
