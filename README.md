@@ -246,7 +246,7 @@ The [`DashboardsController`](app/controllers/dashboards_controller.rb) has only 
 validates that the user is authenticated and scopes the request to show log messages for the resource linked in the user session
 info, provided the resource is still active, as it also scopes to only resources in provisioned state.
 
-![That's all folks!](doc/images/thats_all_folks.png)
+![That's all folks!](public/doc/images/thats_all_folks.png)
 
 ## Best practices
 
@@ -259,4 +259,4 @@ than 98% of the code base.
 ### YARD documentation
 
 Code was documented using [YARD](https://yardoc.org/). A live version of the documents can be found here:
-[https://mylogger-addon.herokuapp.com/doc/index.html](YARD documentation).
+[YARD documentation](https://mylogger-addon.herokuapp.com/doc/index.html).
