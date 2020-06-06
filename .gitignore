@@ -33,4 +33,5 @@
 /TAGS
 
 # Ignore Yard working files
-/.yarddoc/*
+/.yardoc/*
+/doc

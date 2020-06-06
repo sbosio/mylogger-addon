@@ -71,12 +71,12 @@
 
 <li>Install Heroku’s CLI (command line interface tool), if you haven’t done that already, following the <a href="https://devcenter.heroku.com/articles/heroku-cli#download-and-install">instructions</a> for your platform.</li>
 
-<li><a href="https://devcenter.heroku.com/articles/heroku-cli#getting-started">Log in</a> with the CLI tool and install the Add-ons Admin plug-in following these <a href="https://github.com/heroku/heroku-cli-addons-admin#installation">instructions</a>.</li>
+<li><a href="https://devcenter.heroku.com/articles/heroku-cli#getting-started">Log in</a> with the CLI tool and install the Add-ons Admin plug-in by following these <a href="https://github.com/heroku/heroku-cli-addons-admin#installation">instructions</a>.</li>
 </ul>
 
-<h2 id="implementation_steps">Implementation steps</h2>
+<h2 id="implementation">Implementation</h2>
 
-<p>Implementation was done is successive iterations, by following Heroku’s Devcenter documentation on <a href="https://devcenter.heroku.com/articles/building-an-add-on">Building an Add-on</a>.</p>
+<p>Implementation was done through various iterations, by following Heroku’s Devcenter documentation on <a href="https://devcenter.heroku.com/articles/building-an-add-on">Building an Add-on</a>.</p>
 
 <h3 id="generating_the_json_manifest">Generating the JSON manifest</h3>
 
@@ -94,19 +94,118 @@
 
 <h3 id="integrating_with_the_addon_partner_api">Integrating with the Add-on Partner API</h3>
 
-<p>Each add-on must provide correctly implemented endpoints for <em>provisioning</em>, <em>deprovisioning</em> and <em>changing plans</em>. For this demo I haven’t implemented the plan change endpoint as it will never reach GA release stage and there’s only a <a href="https://devcenter.heroku.com/articles/bringing-an-add-on-to-market#alpha-stage">free <em>test</em> plan</a> allowed, but it’s a <strong>MUST</strong> for a real add-on.</p>
+<p>Each add-on must provide correctly implemented endpoints for <em>provisioning</em>, <em>deprovisioning</em> and <em>changing plans</em>. For this demo I haven’t implemented the plan change endpoint as it will never reach GA release stage and there’s only a <a href="https://devcenter.heroku.com/articles/bringing-an-add-on-to-market#alpha-stage">free <em>test</em> plan</a> allowed, but it’s a <strong>MUST</strong> for a real add-on if it will be offering different plans.</p>
 
-<h4 id="provisioning_endpoint">Provisioning endpoint</h4>
+<h4 id="the_provisioning_request">The provisioning request</h4>
 
-<p>Heroku uses the name <em>resource</em> to identify a provisioned add-on for an application, so it was natural to use the same name here to model that domain object. Each instance of the <a href="https://github.com/sbosio/mylogger-addon/blob/master/app/models/resource.rb">Resource</a> model class represents then a provisioning of this Add-on on some Heroku application.</p>
+<p>Heroku uses the name <em>resource</em> to identify a provisioned add-on for an application, so it was natural to use the same name here to model that domain object. Each instance of the <a href="app/models/resource.rb"><code>Resource</code></a> model class represents a provisioning of this Add-on on some Heroku application.</p>
 
 <p>The life cycle of each one of these resources is controlled by a finite state machine defined in the model class using the <a href="https://github.com/state-machines/state_machines">state_machines</a> gem.</p>
 
-<p>Provisioning endpoint must respond to <code>POST</code> requests sent to</p>
+<p><img src="doc/state_machines/Resource_state.png" alt="State machine diagram" /></p>
+
+<p>Provisioning endpoint must respond to <code>POST</code> requests sent to the <code>base_url</code> defined in the add-on manifest. This is implemented through Rails routing (in <a href="config/routes.rb"><code>config/routes.rb</code></a>) as follows:</p>
+
+<p>“by</p>
+
+<h1 id="herokus_resource_provisioning_and_deprovisioning_endpoints">Heroku’s resource provisioning and deprovisioning endpoints</h1>
+
+<p>namespace :heroku do resources :resources, only: %i[create destroy], constraints: -&gt;(req) { req.headers[Accept] == Heroku::MimeType::ADDON_PARTNER_API } match “<em>path“ =&gt; ”errors#not_found“, :via =&gt; :all end</em></p>
+
+<p>“</p>
+
+<p>Constraints are applied to the matching endpoint to ensure it’s a valid request from the specific Heroku Add-on Partner API version implemented. Any other request is redirected to a controller that returns a valid response body with a meaningful error indication as suggested <a href="https://devcenter.heroku.com/articles/add-on-partner-api-reference#exceptions">here</a>.</p>
+
+<p>A valid request to the provisioning endpoint sends credentials to perform HTTP basic authentication. Heroku uses the <code>id</code> as user name combined with the <code>password</code> to authenticate (both values are defined in the add-on manifest). The private method <code>authenticate!</code> at <a href="app/controllers/heroku/resources_controller.rb"><code>Heroku::ResourcesController</code></a> handles the authentication.</p>
+
+<p>Once the request passes the authentication, the <code>create</code> action will create a new <a href="app/models/resource.rb"><code>Resource</code></a> instance with the provided params and send the <code>provision</code> event to it. This event will trigger a callback that enqueues a <a href="app/jobs/heroku/provisioning_job.rb"><code>Heroku::ProvisioningJob</code></a> to perform an <a href="https://devcenter.heroku.com/articles/add-on-partner-api-reference#asynchronous-provisioning"><em>asynchronous provisioning</em></a>. The <code>create</code> action finalizes by returning a <em>202 Accepted</em> status code as required for asynchronous provisioning.</p>
+
+<p><a href="app/jobs/heroku/provisioning_job.rb"><code>Heroku::ProvisioningJob</code></a> will be picked up in the background by the <code>ActiveJob</code> handler (in this case I’m using <a href="https://github.com/collectiveidea/delayed_job">DelayedJob</a>) which makes a call to the <a href="app/services/heroku/provisioning_manager/resource_provisioner.rb"><code>Heroku::ProvisioningManager::ResourceProvisioner</code></a> service object and check the result, raising an exception to force retrying in case of failure.</p>
+
+<p><a href="app/services/heroku/provisioning_manager/resource_provisioner.rb"><code>Heroku::ProvisioningManager::ResourceProvisioner</code></a> is an orchestrator service object in charge of sequentially calling other three service objects who implement each one of the asynchronous provisioning steps:</p>
+
+<ul>
+<li><a href="https://devcenter.heroku.com/articles/add-on-partner-api-reference#grant-code-exchange">OAuth Grant Code Exchange</a> is performed by the <a href="app/services/heroku/authorization_manager/grant_exchanger.rb"><code>Heroku::AuthorizationManager::GrantExchanger</code></a> service object.</li>
+
+<li>Provisioning of the necessary resources in the infrastructure is simulated by the <a href="app/services/heroku/provisioning_manager/resource_provisioner.rb"><code>Heroku::ProvisioningManager::ResourceAllocator</code></a> service object. In this demo add-on it doesn’t allocates any physical resources, but in a real add-on it should implement all required steps to allocate resources (creating databases, configuring disk quotas, etc.).</li>
+
+<li><a href="https://devcenter.heroku.com/articles/add-on-partner-api-reference#add-on-config-update">Add-on Config Update</a> is performed by the <a href="app/services/heroku/provisioning_manager/addon_config_updater.rb"><code>Heroku::ProvisioningManager::AddonConfigUpdater</code></a> service object. Here, we only use it to <a href="https://devcenter.heroku.com/articles/add-on-partner-api-reference#add-on-action-create-provision">mark the add-on as successfully provisioned</a>, but a real add-on might require to implement the update of some config vars before marking the add-on as ready to be used.</li>
+</ul>
+
+<p>A fourth service object, namely <a href="app/services/heroku/authorization_manager/token_refresher.rb"><code>Heroku::AuthorizationManager::TokenRefresher</code></a>, is used when required to <a href="https://devcenter.heroku.com/articles/add-on-partner-api-reference#access-token-refresh">refresh an expired OAuth access token</a>.</p>
+
+<h4 id="the_deprovisioning_request">The deprovisioning request</h4>
+
+<p>In a similar way to provisioning, the <code>destroy</code> action from <a href="app/controllers/heroku/resources_controller.rb"><code>Heroku::ResourcesController</code></a> handles a deprovisioning request. After successful authentication it will just send the <code>deprovision</code> event to the targeted resource (provided it exists), and return a <em>204 No content</em> status code.</p>
+
+<p>The <code>deprovision</code> event will trigger a callback that enqueues a <a href="app/jobs/heroku/provisioning_job.rb"><code>Heroku::DerovisioningJob</code></a> which will run in the background and make a call to the <a href="app/services/heroku/provisioning_manager/resource_deprovisioner.rb
+"><code>Heroku::ProvisioningManager::ResourceDeprovisioner</code></a> service object. As this demo add-on persists the log messages from the application where it’s installed, this service object only takes care of deleting all log frames stored for the resource.</p>
+
+<h4 id="deploy_the_addon">Deploy the add-on</h4>
+
+<p>This last step requires the deploy of the application to a publicly accessible hosting service. I have obviously used Heroku for that. The running version of this add-on can be found at <a href="https://mylogger-addon.herokuapp.com/">https://mylogger-addon.herokuapp.com/</a>. There’s nothing to see there, because you need to access that site from a Heroku application where the add-on is installed, sorry for the inconvenience if you clicked that link from this README.</p>
+
+<p>Finally, the <code>addon-manifest.json</code> file has to be <a href="https://devcenter.heroku.com/articles/building-an-add-on#step-3-deploy-the-add-on">pushed</a> to Heroku in order for the add-on to become available. Remember that pushing the manifest will register the Add-on in <a href="https://devcenter.heroku.com/articles/bringing-an-add-on-to-market#alpha-stage"><em>Alpha</em> stage</a>, so you can only install it on an application by being invited and through the CLI tool.</p>
+
+<h3 id="logging_addons_or_how_to_make_this_addon_something_roughly_useful">Logging add-ons (or how to make this add-on something roughly useful)</h3>
+
+<p>At this point I had an add-on that successfully provisioned and deprovisioned resources, but it was way too far from being useful at all.</p>
+
+<p>For a real life add-on you would have an idea of what service you’re going to provide to the applications of your future customers. I had no one, and as I’m not that savvy, I just came up with the idea of persisting log messages from the application, which was fairly easy to do.</p>
+
+<p>If an add-on wishes to receive the application logs it must notify Heroku so that a log drain is created to send log frames generated by the application to a receiving endpoint exposed publicly. That’s accomplished by adding the flag <code>syslog_drain</code> to the <code>requires</code> section in the add-on manifest file. When this flag is set an additional parameter named <code>log_drain_token</code> is sent on the original provision request. This is an immutable token that is meant to identify the log drain in order to associate it with a specific resource. Log frames are sent without any kind of authentication mechanism, so this token will be used to validate the authenticity of the received log frame, provided that the token is owned by an active (not deprovisioned) resource.</p>
+
+<p>The URL at which log frames will be received must be supplied to Heroku on a key named <code>log_drain_url</code> inside the JSON response to the provision request. For this demo I’m using the same URL for all resources, and differentiate the targeted resource by using the log drain token present in the headers when a log frame is posted to that URL. Invalid requests to that URL are discarded at routing stage by using similar constraints as showed for the provisioning requests.</p>
+
+<p>The <code>create</code> method of <a href="app/controllers/logplex/log_frames_controller.rb"><code>Logplex::LogFramesController</code></a> handles a valid request made to the log drain URL. Before the action is called parameters present in the headers are extracted and validated, checking that an active resource is targeted by the log drain token. The targeted resource and log frame data are then handled to the <a href="app/services/log_frames_manager.rb"><code>LogFramesManager</code></a> service object to be persisted.</p>
+
+<p>The <a href="app/services/log_frames_manager.rb"><code>LogFramesManager</code></a> service object has an extra responsibility besides persisting the log frame received. It ensures the total count of log messages for the targeted resource doesn’t exceeds the limit imposed by the selected plan. It’s just a matter of showing how plans can be used to enforce certain restrictions for a particular resource, as we only can have a free test plan in <em>Alpha</em> stage.</p>
+
+<p>Log frames consist of a set of one or more log messages with a specified format and framing. More information on HTTPS log drains can be found at <a href="https://devcenter.heroku.com/articles/log-drains#https-drains">this Devcenter article on HTTPS drains</a>. In this implementation, the whole log frame content is stored encrypted. Individual log messages are represented by the <a href="app/models/log_message.rb"><code>LogMessage</code></a> model class, but are not persisted individually. It’s just a convenience class used when parsing the frame contents to ease accessing and validating log message attributes.</p>
+
+<h3 id="addon_resource_dasboard__sso_login">Add-on resource dasboard &amp; SSO login</h3>
+
+<p>At this point I had an add-on that could be provisioned and deprovisioned and that also persisted the log messages from the application where it was installed. But there’s no point on doing this unless someone is able to see the log messages, is there? So, for this to work I had to implement a UI that would show the stored log messages to a user. The UI look and feel was completely stolen (with its license permission) as I’m nothing of a web designer, that was the easy part. The tricky part is authentication, as we must ensure that users cannot see log messages from a resource they aren’t allowed to access.</p>
+
+<p>This part is tricky because our add-on resources aren’t owned by users, but by Heroku applications. Briefly describing the owning model it can be said that <em>users own applications</em> and <em>applications own add-ons</em>. Technically, it’s a little more complex than that, but it will be more than enough for this explanation. So, we can’t create user accounts and implement a classic user login mechanism for people to access the add-on resource stored log messages, as we have no information about the users of the Heroku application that owns our resource.</p>
+
+<p>Here’s when Heroku cames to the rescue and provides us an <a href="https://devcenter.heroku.com/articles/add-on-single-sign-on">Add-on Single Sign-on</a> mechanism so that we can authenticate the user. It’s like authenticating by a transitive property. If the user wanting to reach our resource’s dashboard has been already authenticated and authorized by Heroku to access the application that owns our add-on resource, then we are able to authenticate that user provided the request is received from Heroku on behalf of the user.</p>
+
+<p>Then it’s just a matter of validating that the request was originated from Heroku. That’s done by reconstructing a token from information sent to the <code>sso_url</code> endpoint we set initially on our add-on manifest and comparing it to the one present in the request.</p>
+
+<p>The token is a cryptographic hash generated by the <a href="https://en.wikipedia.org/wiki/SHA-1">SHA-1 function</a> from a string consisting of three components:</p>
+
+<ul>
+<li>The resource <code>id</code> as established when the resource was first provisioned.</li>
+
+<li>A secret <em>salt</em> (the value of the <code>sso_salt</code> key in our add-on manifest).</li>
+
+<li>The timestamp at which the token was generated, expressed as <a href="https://en.wikipedia.org/wiki/Unix_time">Unix time</a>.</li>
+</ul>
+
+<p>The component that lets us know it is a valid request originated from Heroku is the <em>salt</em>, as it’s a secret only known by our add-on and Heroku. The other two components are sent as URL parameters along with the generated token for us to reconstruct and compare against the received token.</p>
+
+<p><a href="app/controllers/sso/sessions_controller.rb"><code>Sso::SessionsController</code></a> handles log-in requests sent from Heroku and log-out requests performed by the user. Here, I’m using a simple <a href="https://api.rubyonrails.org/classes/ActionDispatch/Session/CookieStore.html">cookie store</a> to hold the session info that consists basically on saving the internal resource <em>id</em> into the session store.</p>
+
+<p>After a successful log-in, a session is created and the user is redirected to the dashboard URL.</p>
+
+<p>The <a href="app/controllers/dashboards_controller.rb"><code>DashboardsController</code></a> has only the <code>show</code> action implemented and it simply validates that the user is authenticated and scopes the request to show log messages for the resource linked in the user session info, provided the resource is still active, as it also scopes to only resources in provisioned state.</p>
+
+<p><img src="public/doc/images/thats_all_folks.png" alt="Thats all folks!" /></p>
+
+<h2 id="best_practices">Best practices</h2>
+
+<h3 id="tdd">TDD</h3>
+
+<p>Last, but not least, implementation was done following a <a href="https://en.wikipedia.org/wiki/Test-driven_development">TDD</a> process, so there’s more than 100 tests to ensure the application behaves as required by Heroku APIs, giving a test coverage greater than 98% of the code base.</p>
+
+<h3 id="yard_documentation">YARD documentation</h3>
+
+<p>Code was documented using <a href="https://yardoc.org/">YARD</a>. A live version of the documents can be found here: <a href="https://mylogger-addon.herokuapp.com/doc/index.html">YARD documentation</a>.</p>
 </div></div>
 
       <div id="footer">
-  Generated on Thu Jun  4 21:07:00 2020 by
+  Generated on Sat Jun  6 16:48:50 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.6.6).
 </div>
