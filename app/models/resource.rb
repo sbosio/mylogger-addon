@@ -65,10 +65,14 @@ class Resource < ApplicationRecord
   #
   # Returns the count of log messages stored for this resource.
   #
+  # @param refresh [Boolean] if `true` the count will be recalculated even if it was already memoized.
+  #
   # @return [Integer] count of log messages
   #
-  def log_messages_count
-    @log_messages_count ||= log_frames.sum(:message_count)
+  def log_messages_count(refresh: false)
+    return @log_messages_count if @log_messages_count.present? && !refresh
+
+    @log_messages_count = log_frames.sum(:message_count)
   end
 
   #

@@ -60,7 +60,7 @@ class LogFramesManager < ApplicationService
   # @return [true, false]
   #
   def limit_exceeded?
-    return true if @resource.reload.log_messages_count > @max_log_messages
+    return true if @resource.log_messages_count(refresh: true) > @max_log_messages
     false
   end
 end
