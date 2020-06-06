@@ -75,7 +75,7 @@ of this Add-on on some Heroku application.
 The life cycle of each one of these resources is controlled by a finite state machine defined in the model class using the
 [state_machines](https://github.com/state-machines/state_machines) gem.
 
-![State machine diagram](doc/state_machines/Resource_state.png)
+![State machine diagram](public/doc/state_machines/Resource_state.png)
 
 Provisioning endpoint must respond to `POST` requests sent to the `base_url` defined in the add-on manifest. This is implemented
 through Rails routing (in [`config/routes.rb`](config/routes.rb)) as follows:
