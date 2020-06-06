@@ -29,10 +29,14 @@ module Logplex
     end
 
     #
-    # Sets the targeted resource if it exists and is active based on the log drain token present in the request headers.
+    # Maps POST request info to LogFrame attributes.
     #
-    def set_resource
-      @resource = Resource.find_by!(log_drain_token: header_params[:drain_token], state: "provisioned")
+    def create_params
+      {
+        message_count: header_params[:message_count],
+        external_id: header_params[:external_id],
+        frame_content: request.raw_post
+      }
     end
 
     #
@@ -47,14 +51,10 @@ module Logplex
     end
 
     #
-    # Maps POST request info to LogFrame attributes.
+    # Sets the targeted resource if it exists and is active based on the log drain token present in the request headers.
     #
-    def create_params
-      {
-        message_count: header_params[:message_count],
-        external_id: header_params[:external_id],
-        frame_content: request.raw_post
-      }
+    def set_resource
+      @resource = Resource.find_by!(log_drain_token: header_params[:drain_token], state: "provisioned")
     end
   end
 end
