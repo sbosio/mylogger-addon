@@ -218,7 +218,7 @@ This class contains 1 state machine(s).
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#log_messages_count-instance_method" title="#log_messages_count (instance method)">#<strong>log_messages_count</strong>  &#x21d2; Integer </a>
+      <a href="#log_messages_count-instance_method" title="#log_messages_count (instance method)">#<strong>log_messages_count</strong>(refresh: false)  &#x21d2; Integer </a>
     
 
     
@@ -299,16 +299,16 @@ This class contains 1 state machine(s).
       <pre class="lines">
 
 
-88
-89
-90
-91
 92
 93
-94</pre>
+94
+95
+96
+97
+98</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/resource.rb', line 88</span>
+      <pre class="code"><span class="info file"># File 'app/models/resource.rb', line 92</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_average_retention'>average_retention</span>
   <span class='id identifier rubyid_log_frames_timespan'>log_frames_timespan</span> <span class='op'>=</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_current'>current</span> <span class='op'>-</span> <span class='lparen'>(</span><span class='id identifier rubyid_log_frames'>log_frames</span><span class='period'>.</span><span class='id identifier rubyid_minimum'>minimum</span><span class='lparen'>(</span><span class='symbol'>:created_at</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_created_at'>created_at</span><span class='rparen'>)</span>
@@ -429,12 +429,12 @@ This class contains 1 state machine(s).
       <pre class="lines">
 
 
-79
-80
-81</pre>
+83
+84
+85</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/resource.rb', line 79</span>
+      <pre class="code"><span class="info file"># File 'app/models/resource.rb', line 83</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_log_messages'>log_messages</span>
   <span class='id identifier rubyid_log_frames'>log_frames</span><span class='period'>.</span><span class='id identifier rubyid_order'>order</span><span class='lparen'>(</span><span class='symbol'>:created_at</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:log_messages</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_flatten'>flatten</span>
@@ -447,7 +447,7 @@ This class contains 1 state machine(s).
       <div class="method_details ">
   <h3 class="signature " id="log_messages_count-instance_method">
   
-    #<strong>log_messages_count</strong>  &#x21d2; <tt>Integer</tt> 
+    #<strong>log_messages_count</strong>(refresh: false)  &#x21d2; <tt>Integer</tt> 
   
 
   
@@ -462,7 +462,29 @@ This class contains 1 state machine(s).
   </div>
 </div>
 <div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
   
+    <li>
+      
+        <span class='name'>refresh</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>false</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>if `true` the count will be recalculated even if it was already memoized.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
 <p class="tag_title">Returns:</p>
 <ul class="return">
   
@@ -488,15 +510,19 @@ This class contains 1 state machine(s).
       <pre class="lines">
 
 
-70
-71
-72</pre>
+72
+73
+74
+75
+76</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/resource.rb', line 70</span>
+      <pre class="code"><span class="info file"># File 'app/models/resource.rb', line 72</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_log_messages_count'>log_messages_count</span>
-  <span class='ivar'>@log_messages_count</span> <span class='op'>||=</span> <span class='id identifier rubyid_log_frames'>log_frames</span><span class='period'>.</span><span class='id identifier rubyid_sum'>sum</span><span class='lparen'>(</span><span class='symbol'>:message_count</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_log_messages_count'>log_messages_count</span><span class='lparen'>(</span><span class='label'>refresh:</span> <span class='kw'>false</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='ivar'>@log_messages_count</span> <span class='kw'>if</span> <span class='ivar'>@log_messages_count</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='id identifier rubyid_refresh'>refresh</span>
+
+  <span class='ivar'>@log_messages_count</span> <span class='op'>=</span> <span class='id identifier rubyid_log_frames'>log_frames</span><span class='period'>.</span><span class='id identifier rubyid_sum'>sum</span><span class='lparen'>(</span><span class='symbol'>:message_count</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -508,7 +534,7 @@ This class contains 1 state machine(s).
 </div>
 
       <div id="footer">
-  Generated on Thu Jun  4 21:07:00 2020 by
+  Generated on Sat Jun  6 16:48:50 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.6.6).
 </div>
