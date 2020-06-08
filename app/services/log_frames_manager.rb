@@ -23,6 +23,7 @@ class LogFramesManager < ApplicationService
         enforce_limit!
       end
     end
+    true
   rescue ActiveRecord::RecordNotUnique
     Rails.logger.warn { "LogFramesManager: duplicated frame!" }
     true
@@ -40,11 +41,10 @@ class LogFramesManager < ApplicationService
     selected = []
     log_frames = @resource.log_frames.where.not(id: @log_frame.id).order(:created_at)
     log_frames.each do |log_frame|
-      break if (@resource.log_messages_count - selected.map(&:message_count).sum) <= @max_log_messages
+      break if (@resource.log_messages_count - (selected.map(&:message_count).sum + log_frame.message_count)) <= @max_log_messages
       selected.push log_frame
     end
     LogFrame.where(resource_id: @resource.id, id: selected.map(&:id)).delete_all
-    true
   end
 
   #
