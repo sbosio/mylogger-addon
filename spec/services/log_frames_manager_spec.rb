@@ -46,7 +46,7 @@ describe LogFramesManager, type: :service do
     end
 
     context "when plan limit is reached" do
-      let(:log_frame) { build :log_frame, message_count: 10, created_at: newer_log_frame.created_at + 10.seconds }
+      let(:log_frame) { build :log_frame, message_count: 11, created_at: newer_log_frame.created_at + 10.seconds }
       let(:newer_log_frame) do
         create :log_frame, resource_id: resource.id,
                            message_count: 5,
