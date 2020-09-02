@@ -15,6 +15,7 @@ FactoryBot.define do
     state { "pending" }
     created_at { Time.current }
     updated_at { created_at }
+    log_input_url { "https://token:t.#{FFaker::Guid.guid.downcase}@1.us.logplex.io/logs" }
 
     trait :with_tokens do
       access_token { FFaker::Guid.guid.downcase }

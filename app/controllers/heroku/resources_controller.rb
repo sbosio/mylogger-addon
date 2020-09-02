@@ -82,7 +82,8 @@ module Heroku
         plan: resource_params[:plan],
         region: resource_params[:region],
         external_id: resource_params[:uuid],
-        log_drain_token: resource_params[:log_drain_token]
+        log_drain_token: resource_params[:log_drain_token],
+        log_input_url: resource_params[:log_input_url]
       }
     end
 
@@ -91,7 +92,7 @@ module Heroku
     #
     def resource_params
       @resource_params ||= params.permit(
-        :callback_url, :name, :options, :plan, :region, :uuid, :log_drain_token, oauth_grant: %i[code expires_at type]
+        :callback_url, :name, :options, :plan, :region, :uuid, :log_drain_token, :log_input_url, oauth_grant: %i[code expires_at type]
       )
     end
   end
