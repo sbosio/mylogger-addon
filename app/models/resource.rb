@@ -18,7 +18,7 @@ class Resource < ApplicationRecord
   #
   # Lockbox encrypted attributes.
   #
-  encrypts :grant_code, :access_token, :refresh_token
+  encrypts :grant_code, :access_token, :refresh_token, :log_input_url
 
   #
   # Verify that the requested plan is still available or raise an exception.
