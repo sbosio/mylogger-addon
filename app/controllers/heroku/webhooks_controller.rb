@@ -9,8 +9,6 @@ module Heroku
     # POST /webhooks
     #
     def create
-      Rails.logger.info ActiveSupport::JSON.decode(req.body)
-
       head :no_content
     end
   end
