@@ -14,7 +14,7 @@ module Heroku
           "api:app"
         ],
         level: "sync",
-        url: "https://mylogger-addon.herokuapp.com/webhooks"
+        url: "https://mylogger-addon.herokuapp.com/heroku/webhooks"
       }.freeze
 
       def initialize(resource)
