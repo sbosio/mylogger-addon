@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   namespace :heroku do
     resources :resources, only: %i[create destroy],
                           constraints: ->(req) { req.headers["Accept"] == Heroku::MimeType::ADDON_PARTNER_API }
+    resources :webhooks, only: :create,
+                         constraints: ->(req) { req.headers["Authorization"]&.split(/\s+/)&.second == Rails.application.credentials.webhook_events_authorization }
     match "*path" => "errors#not_found", :via => :all
   end
 

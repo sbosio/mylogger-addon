@@ -23,6 +23,7 @@ module Heroku
         return false unless @resource.provisioning?
         return false unless AuthorizationManager::GrantExchanger.call(@resource)
         return false unless ResourceAllocator.call(@resource)
+        return false unless WebhookSubscriber.call(@resource)
         return false unless AddonConfigUpdater.call(@resource)
 
         @resource.provision_completed!
