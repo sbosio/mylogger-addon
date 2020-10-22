@@ -161,7 +161,6 @@ Layout/FirstHashElementIndentation:
 
 Layout/HeredocIndentation:
   Enabled: true
-  EnforcedStyle: squiggly
 
 Layout/IndentationConsistency:
   Enabled: true
@@ -522,7 +521,7 @@ Lint/UriRegexp:
 Lint/UselessAssignment:
   Enabled: true
 
-Lint/UselessComparison:
+Lint/BinaryOperatorWithIdenticalOperands:
   Enabled: true
 
 Lint/UselessElseWithoutRescue:
@@ -787,8 +786,8 @@ Style/MethodCallWithoutArgsParentheses:
   Enabled: true
   IgnoredMethods: []
 
-Style/MethodMissingSuper:
-  Enabled: true
+Lint/MissingSuper:
+  Enabled: false
 
 Style/MissingRespondToMissing:
   Enabled: true

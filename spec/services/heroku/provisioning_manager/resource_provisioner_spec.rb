@@ -14,6 +14,9 @@ describe Heroku::ProvisioningManager::ResourceProvisioner, type: :service do
       allow(Heroku::ProvisioningManager::ResourceAllocator).to(
         receive(:call).with(resource).and_return(resource_allocator_result)
       )
+      allow(Heroku::ProvisioningManager::WebhookSubscriber).to(
+        receive(:call).with(resource).and_return(webhook_subscriber_result)
+      )
       allow(Heroku::ProvisioningManager::AddonConfigUpdater).to(
         receive(:call).with(resource).and_return(addon_config_updater_result)
       )
@@ -22,6 +25,7 @@ describe Heroku::ProvisioningManager::ResourceProvisioner, type: :service do
     context "when the grant exchanger service fails" do
       let(:grant_exchanger_result) { false }
       let(:resource_allocator_result) { nil }
+      let(:webhook_subscriber_result) { nil }
       let(:addon_config_updater_result) { nil }
 
       it "calls grant exchanger service object" do
@@ -32,6 +36,11 @@ describe Heroku::ProvisioningManager::ResourceProvisioner, type: :service do
       it "never calls resource allocator service object" do
         result
         expect(Heroku::ProvisioningManager::ResourceAllocator).not_to have_received(:call).with(resource)
+      end
+
+      it "never calls webhook subscriber service object" do
+        result
+        expect(Heroku::ProvisioningManager::WebhookSubscriber).not_to have_received(:call).with(resource)
       end
 
       it "never calls addon config updater service object" do
@@ -47,11 +56,17 @@ describe Heroku::ProvisioningManager::ResourceProvisioner, type: :service do
     context "when grant exchanger service succeeds and resource allocator service fails" do
       let(:grant_exchanger_result) { true }
       let(:resource_allocator_result) { false }
+      let(:webhook_subscriber_result) { nil }
       let(:addon_config_updater_result) { nil }
 
       it "calls resource allocator service object" do
         result
         expect(Heroku::ProvisioningManager::ResourceAllocator).to have_received(:call).with(resource)
+      end
+
+      it "never calls webhook subscriber service object" do
+        result
+        expect(Heroku::ProvisioningManager::WebhookSubscriber).not_to have_received(:call).with(resource)
       end
 
       it "never calls addon config updater service object" do
@@ -64,9 +79,26 @@ describe Heroku::ProvisioningManager::ResourceProvisioner, type: :service do
       end
     end
 
-    context "when resource allocator service succeeds and addon config updater service fails" do
+    context "when resource allocator service succeeds and webhook subscriber service fails" do
       let(:grant_exchanger_result) { true }
       let(:resource_allocator_result) { true }
+      let(:webhook_subscriber_result) { false }
+      let(:addon_config_updater_result) { nil }
+
+      it "calls webhook subscriber service object" do
+        result
+        expect(Heroku::ProvisioningManager::WebhookSubscriber).to have_received(:call).with(resource)
+      end
+
+      it "returns false" do
+        expect(result).to be(false)
+      end
+    end
+
+    context "when webhook subscriber service succeeds and addon config updater service fails" do
+      let(:grant_exchanger_result) { true }
+      let(:resource_allocator_result) { true }
+      let(:webhook_subscriber_result) { true }
       let(:addon_config_updater_result) { false }
 
       it "calls addon config updater service object" do
@@ -82,6 +114,7 @@ describe Heroku::ProvisioningManager::ResourceProvisioner, type: :service do
     context "when all orchestrated services succeed" do
       let(:grant_exchanger_result) { true }
       let(:resource_allocator_result) { true }
+      let(:webhook_subscriber_result) { true }
       let(:addon_config_updater_result) { true }
 
       it "sets resource's state to 'provisioned'" do
@@ -97,6 +130,7 @@ describe Heroku::ProvisioningManager::ResourceProvisioner, type: :service do
     context "when any exception is raised" do
       let(:grant_exchanger_result) { true }
       let(:resource_allocator_result) { true }
+      let(:webhook_subscriber_result) { true }
       let(:addon_config_updater_result) { true }
 
       it "returns false" do
