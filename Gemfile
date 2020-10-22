@@ -9,16 +9,16 @@ ruby "2.6.6"
 gem "rails", "~> 5.2.4", ">= 5.2.4.3"
 
 # Use postgresql as the database for Active Record
-gem "pg", ">= 0.18", "< 2.0"
+gem "pg"
 
 # Use Puma as the app server
-gem "puma", "~> 3.11"
+gem "puma"
 
 # Use ActiveModel has_secure_password
-gem "bcrypt", "~> 3.1.7"
+gem "bcrypt"
 
 # Reduces boot times through caching; required in config/boot.rb
-gem "bootsnap", ">= 1.1.0", require: false
+gem "bootsnap", require: false
 
 # Use Fast JSON API for serialization.
 gem "fast_jsonapi"
@@ -64,7 +64,7 @@ group :development, :test do
 end
 
 group :development do
-  gem "listen", ">= 3.0.5", "< 3.2"
+  gem "listen"
   gem "rails_best_practices"
   gem "rails-erd"
   gem "ripper-tags"
@@ -73,8 +73,8 @@ group :development do
   gem "rubocop-rspec"
   gem "solargraph"
   gem "spring"
-  gem "spring-watcher-listen", "~> 2.0.0"
-  gem "standard", "~> 0.4"
+  gem "spring-watcher-listen"
+  gem "standard"
   gem "state_machines-graphviz"
   gem "yard"
   gem "yard-state_machines", github: "ebababi/yard-state_machines"
