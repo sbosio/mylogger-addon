@@ -7,7 +7,7 @@ module Heroku
     #
     class WebhookSubscriber < ApplicationService
       SUBSCRIBE_PAYLOAD = {
-        authorization: Rails.application.credentials.webhook_events_authorization,
+        authorization: "Bearer #{Rails.application.credentials.webhook_events_authorization}",
         include: [
           "api:addon",
           "api:addon_attachment",
