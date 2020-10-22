@@ -10,7 +10,7 @@ module Heroku
         authorization: "Bearer #{Rails.application.credentials.webhook_events_authorization}",
         include: [
           "api:addon",
-          "api:addon_attachment",
+          "api:addon-attachment",
           "api:app"
         ],
         level: "sync",
