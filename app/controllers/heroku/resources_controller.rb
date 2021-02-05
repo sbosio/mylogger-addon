@@ -63,8 +63,8 @@ module Heroku
     def build_response
       {
         id: @resource.external_id,
-        message: I18n.t("heroku.resources.provision_requested_for_#{@resource.state}_resource") #,
-        # log_drain_url: "#{ENV["LOG_DRAIN_SCHEMA"] || "https"}://#{ENV["LOG_DRAIN_HOST"] || "mylogger-addon.heroku.com"}/logplex/log_frames"
+        message: I18n.t("heroku.resources.provision_requested_for_#{@resource.state}_resource"),
+        log_drain_url: "#{ENV["LOG_DRAIN_URL"] || "https://mylogger-addon.heroku.com"}/logplex/log_frames"
       }
     end
 
