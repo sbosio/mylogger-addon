@@ -64,7 +64,8 @@ module Heroku
       {
         id: @resource.external_id,
         message: I18n.t("heroku.resources.provision_requested_for_#{@resource.state}_resource"),
-        log_drain_url: "#{request.protocol}#{request.host_with_port}/logplex/log_frames"
+        # log_drain_url: "#{request.protocol}#{request.host_with_port}/logplex/log_frames"
+        log_drain_url: "https://#{ENV["IP_ADDRESS"] || "54.210.203.228"}/logplex/log_frames"
       }
     end
 
