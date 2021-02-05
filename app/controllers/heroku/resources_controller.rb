@@ -22,7 +22,7 @@ module Heroku
         status = :unprocessable_entity
       end
 
-      render json: build_response.to_json, status: status # , content_type: Heroku::MimeType::ADDON_PARTNER_API
+      render json: build_response.to_json, status: status, content_type: "text/html" # Heroku::MimeType::ADDON_PARTNER_API
     end
 
     #
