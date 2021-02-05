@@ -22,7 +22,7 @@ module Heroku
         status = :unprocessable_entity
       end
 
-      render json: build_response.to_json, status: status, content_type: "text/html" # Heroku::MimeType::ADDON_PARTNER_API
+      render json: build_response.to_json, status: status, content_type: Heroku::MimeType::ADDON_PARTNER_API
     end
 
     #
@@ -63,8 +63,8 @@ module Heroku
     def build_response
       {
         id: @resource.external_id,
-        message: I18n.t("heroku.resources.provision_requested_for_#{@resource.state}_resource"),
-        log_drain_url: "#{ENV["LOG_DRAIN_SCHEMA"] || "https"}://#{ENV["LOG_DRAIN_HOST"] || "mylogger-addon.heroku.com"}/logplex/log_frames"
+        message: I18n.t("heroku.resources.provision_requested_for_#{@resource.state}_resource") #,
+        # log_drain_url: "#{ENV["LOG_DRAIN_SCHEMA"] || "https"}://#{ENV["LOG_DRAIN_HOST"] || "mylogger-addon.heroku.com"}/logplex/log_frames"
       }
     end
 
