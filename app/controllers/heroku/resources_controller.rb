@@ -17,7 +17,7 @@ module Heroku
 
       begin
         @resource.provision!
-        status = :created
+        status = :accepted
       rescue StateMachines::InvalidTransition
         status = :unprocessable_entity
       end
